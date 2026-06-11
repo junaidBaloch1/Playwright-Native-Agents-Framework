@@ -1,0 +1,2 @@
+[   31106ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://code-demo.myshopify.com/favicon.ico:0
+[   58288ms] [INFO] Clear-Site-Data header on 'https://code-demo.myshopify.com/cart/add.js': Cleared data types: "prefetchCache", "prerenderCache". @ https://code-demo.myshopify.com/products/black-white-watch:0

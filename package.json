@@ -1,0 +1,33 @@
+{
+  "name": "pw-agents-poc",
+  "version": "1.0.0",
+  "description": "AI-driven test automation framework using Playwright Native Test Agents",
+  "main": "index.js",
+  "author": "",
+  "license": "ISC",
+  "keywords": [
+    "playwright",
+    "test-automation",
+    "ai-agents",
+    "e2e",
+    "shopify"
+  ],
+  "scripts": {
+    "test": "playwright test",
+    "test:ci": "playwright test --project=chromium",
+    "test:setup": "playwright test --project=setup",
+    "test:smoke": "playwright test --project=chromium --grep @smoke",
+    "test:headed": "cross-env HEADED=true playwright test",
+    "test:debug": "cross-env PWDEBUG=1 playwright test",
+    "test:trace": "playwright test --trace on",
+    "report": "playwright show-report",
+    "clean": "rm -rf playwright-report test-results playwright/.auth/user.json",
+    "clean:auth": "echo '{\"cookies\":[],\"origins\":[]}' > playwright/.auth/user.json"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.60.0",
+    "@types/node": "^25.9.1",
+    "cross-env": "^7.0.3",
+    "dotenv": "^17.4.2"
+  }
+}

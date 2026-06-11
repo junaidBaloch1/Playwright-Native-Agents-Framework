@@ -1,0 +1,78 @@
+# .github/workflows/playwright.yml
+name: Playwright Tests
+
+on:
+  push:
+    branches: [main, master, develop]
+  pull_request:
+    branches: [main, master, develop]
+  workflow_dispatch:              # manual trigger from GitHub UI
+
+jobs:
+  test:
+    name: Playwright Test Suite
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Checkout
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2. Node setup
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: 'npm'            # caches node_modules between runs
+
+      # 3. Install dependencies
+      - name: Install dependencies
+        run: npm ci
+
+      # 4. Install only Chromium — keeps CI fast and lean
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      # 5. Create auth directory so seed.spec.ts never hits ENOENT
+      - name: Create auth directory
+        run: |
+          mkdir -p playwright/.auth
+          echo '{"cookies":[],"origins":[]}' > playwright/.auth/user.json
+
+      # 6. Run seed / setup project first — writes authenticated session
+      - name: Run seed setup
+        run: npx playwright test --project=setup
+        env:
+          BASE_URL: ${{ secrets.BASE_URL }}
+          TEST_USER_EMAIL: ${{ secrets.TEST_USER_EMAIL }}
+          TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
+          SHOPIFY_STORE_PASSWORD: ${{ secrets.SHOPIFY_STORE_PASSWORD }}
+
+      # 7. Run full test suite against Chromium
+      - name: Run Playwright tests
+        run: npx playwright test --project=chromium
+        env:
+          BASE_URL: ${{ secrets.BASE_URL }}
+          TEST_USER_EMAIL: ${{ secrets.TEST_USER_EMAIL }}
+          TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
+          SHOPIFY_STORE_PASSWORD: ${{ secrets.SHOPIFY_STORE_PASSWORD }}
+          CI: true
+
+      # 8. Upload HTML report — always, even on failure
+      - name: Upload Playwright report
+        uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: playwright-report-${{ github.run_id }}
+          path: playwright-report/
+          retention-days: 30
+
+      # 9. Upload traces — only on failure, for debugging
+      - name: Upload traces on failure
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-traces-${{ github.run_id }}
+          path: test-results/
+          retention-days: 7

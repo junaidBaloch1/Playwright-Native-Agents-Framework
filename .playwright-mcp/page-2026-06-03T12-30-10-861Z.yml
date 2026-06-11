@@ -1,0 +1,176 @@
+- generic [ref=e1]:
+  - banner [ref=e6]:
+    - generic [ref=e8]:
+      - link "CODE Demo" [ref=e11] [cursor=pointer]:
+        - /url: /
+        - img "CODE Demo" [ref=e12]
+      - navigation [ref=e13]:
+        - list [ref=e14]:
+          - listitem [ref=e15]:
+            - link "News" [ref=e16] [cursor=pointer]:
+              - /url: /blogs/news
+          - listitem [ref=e17]:
+            - link "Home" [ref=e18] [cursor=pointer]:
+              - /url: /
+          - listitem [ref=e19]:
+            - link "Products" [ref=e20] [cursor=pointer]:
+              - /url: /collections/all
+          - listitem [ref=e21]:
+            - link "Cart" [ref=e22] [cursor=pointer]:
+              - /url: /cart
+              - generic [ref=e23]:
+                - generic [ref=e24]: 
+                - generic [ref=e25]: Cart
+      - text: 
+  - generic [active] [ref=e144]:
+    - generic [ref=e146]:
+      - generic [ref=e147]: Your cart
+      - button "Close Cart" [ref=e149] [cursor=pointer]:
+        - generic [ref=e150]: 
+        - generic [ref=e151]: Close Cart
+    - generic [ref=e152]:
+      - generic:
+        - generic:
+          - generic [ref=e156]:
+            - link "Black / White watch" [ref=e158] [cursor=pointer]:
+              - /url: /products/black-white-watch?variant=29684356677729
+              - img "Black / White watch" [ref=e159]
+            - generic [ref=e160]:
+              - generic [ref=e161]:
+                - link "Black / White watch" [ref=e162] [cursor=pointer]:
+                  - /url: /products/black-white-watch?variant=29684356677729
+                - generic [ref=e163]: Black
+              - generic [ref=e164]:
+                - generic [ref=e166]:
+                  - button "Reduce item quantity by one" [ref=e167] [cursor=pointer]:
+                    - generic [ref=e168]: 
+                    - generic [ref=e169]: −
+                  - textbox "quantity" [ref=e170]: "1"
+                  - button "Increase item quantity by one" [ref=e171] [cursor=pointer]:
+                    - generic [ref=e172]: 
+                    - generic [ref=e173]: +
+                - generic [ref=e175]: €25,00
+          - generic [ref=e176]:
+            - generic [ref=e177]:
+              - paragraph [ref=e179]: Subtotal
+              - paragraph [ref=e181]: €25,00
+            - paragraph [ref=e182]: Tax included and shipping calculated at checkout
+            - button "Check Out" [ref=e183] [cursor=pointer]:
+              - text: Check Out
+              - generic [ref=e184]: 
+  - generic [ref=e26]:
+    - main [ref=e27]:
+      - generic [ref=e28]:
+        - generic [ref=e31]:
+          - img "Black / White watch" [ref=e38]
+          - generic [ref=e40]:
+            - heading "Black / White watch" [level=1] [ref=e41]
+            - generic [ref=e42]:
+              - generic [ref=e43]:
+                - generic [ref=e44]: Regular price
+                - generic [ref=e45]: Sale price
+                - text: €25,00
+              - generic [ref=e46]: Tax included.
+              - separator [ref=e47]
+              - generic [ref=e48]:
+                - generic [ref=e49]:
+                  - generic [ref=e50]: Colour
+                  - group [ref=e51]:
+                    - radio "Black" [checked] [ref=e52]
+                    - generic [ref=e53] [cursor=pointer]: Black
+                    - radio "White" [ref=e54]
+                    - generic [ref=e55] [cursor=pointer]: White
+                - generic [ref=e56]:
+                  - button "Add to Cart" [ref=e57] [cursor=pointer]
+                  - button "Buy it now" [ref=e61] [cursor=pointer]
+            - paragraph [ref=e63]: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus molestie mauris et tellus hendrerit, non tristique diam tristique. Aenean semper ut quam non placerat. Aliquam nec euismod dui. Nulla id ante id mi pretium consectetur. Donec fermentum velit vitae commodo commodo. Donec mollis nunc dictum viverra accumsan. Integer finibus sem non elit ullamcorper blandit sed ut nunc. Duis sem est, efficitur quis aliquet in, volutpat sit amet erat. Nulla sit amet velit sit amet lorem luctus consectetur in ac turpis. Fusce sed molestie ex. Aliquam tincidunt massa sit amet scelerisque egestas. Cras rhoncus justo nisl, non elementum nisl facilisis nec. Sed tristique tempus pellentesque. Donec id accumsan tellus, nec vulputate turpis. Donec nunc nulla, ultrices in ultricies et, mollis at mi.
+            - generic [ref=e64]:
+              - link "Share on Facebook" [ref=e65] [cursor=pointer]:
+                - /url: //www.facebook.com/sharer.php?u=https://code-demo.myshopify.com/products/black-white-watch
+                - generic [ref=e66]: 
+                - generic [ref=e67]: Share
+                - generic [ref=e68]: Share on Facebook
+              - link "Tweet on Twitter" [ref=e69] [cursor=pointer]:
+                - /url: //twitter.com/share?text=Black%20/%20White%20watch&url=https://code-demo.myshopify.com/products/black-white-watch
+                - generic [ref=e70]: T
+                - generic [ref=e71]: Tweet
+                - generic [ref=e72]: Tweet on Twitter
+              - link "Pin on Pinterest" [ref=e73] [cursor=pointer]:
+                - /url: //pinterest.com/pin/create/button/?url=https://code-demo.myshopify.com/products/black-white-watch&media=//code-demo.myshopify.com/cdn/shop/products/watches-in-black-white_1024x1024.jpg?v=1565364392&description=Black%20/%20White%20watch
+                - generic [ref=e74]: 
+                - generic [ref=e75]: Pin it
+                - generic [ref=e76]: Pin on Pinterest
+        - generic [ref=e79]:
+          - generic [ref=e80]:
+            - heading "You may also like" [level=2] [ref=e81]
+            - separator [ref=e82]
+          - generic [ref=e83]:
+            - generic [ref=e85]:
+              - link "Black watch" [ref=e87] [cursor=pointer]:
+                - /url: /products/black-watch?pr_prod_strat=collection_fallback&pr_rec_id=aa74892d2&pr_rec_pid=3981890912353&pr_ref_pid=3981890748513&pr_seq=uniform
+                - img "Black watch" [ref=e90]
+              - link "Black watch — Regular price €30" [ref=e91] [cursor=pointer]:
+                - /url: /products/black-watch?pr_prod_strat=collection_fallback&pr_rec_id=aa74892d2&pr_rec_pid=3981890912353&pr_ref_pid=3981890748513&pr_seq=uniform
+                - text: Black watch
+                - generic [ref=e92]:
+                  - text: —
+                  - generic [ref=e93]:
+                    - generic [ref=e94]: Regular price
+                    - text: €30
+            - generic [ref=e96]:
+              - link "Turquoise watch" [ref=e98] [cursor=pointer]:
+                - /url: /products/turquoise-watch?pr_prod_strat=collection_fallback&pr_rec_id=aa74892d2&pr_rec_pid=3981891240033&pr_ref_pid=3981890748513&pr_seq=uniform
+                - img "Turquoise watch" [ref=e101]
+              - link "Turquoise watch — Regular price €25" [ref=e102] [cursor=pointer]:
+                - /url: /products/turquoise-watch?pr_prod_strat=collection_fallback&pr_rec_id=aa74892d2&pr_rec_pid=3981891240033&pr_ref_pid=3981890748513&pr_seq=uniform
+                - text: Turquoise watch
+                - generic [ref=e103]:
+                  - text: —
+                  - generic [ref=e104]:
+                    - generic [ref=e105]: Regular price
+                    - text: €25
+            - generic [ref=e107]:
+              - link "Marble round watch" [ref=e109] [cursor=pointer]:
+                - /url: /products/marble-round-watch?pr_prod_strat=collection_fallback&pr_rec_id=aa74892d2&pr_rec_pid=3981891010657&pr_ref_pid=3981890748513&pr_seq=uniform
+                - img "Marble round watch" [ref=e112]
+              - link "Marble round watch — Regular price €70" [ref=e113] [cursor=pointer]:
+                - /url: /products/marble-round-watch?pr_prod_strat=collection_fallback&pr_rec_id=aa74892d2&pr_rec_pid=3981891010657&pr_ref_pid=3981890748513&pr_seq=uniform
+                - text: Marble round watch
+                - generic [ref=e114]:
+                  - text: —
+                  - generic [ref=e115]:
+                    - generic [ref=e116]: Regular price
+                    - text: €70
+    - separator [ref=e117]
+    - contentinfo [ref=e119]:
+      - generic [ref=e121]:
+        - list [ref=e123]:
+          - listitem [ref=e124]:
+            - link "Search" [ref=e125] [cursor=pointer]:
+              - /url: /search
+          - listitem [ref=e126]:
+            - link "Test footer link" [ref=e127] [cursor=pointer]:
+              - /url: /
+        - list [ref=e129]:
+          - listitem [ref=e130]:
+            - link "Facebook" [ref=e131] [cursor=pointer]:
+              - /url: https://www.facebook.com/code.nl/
+              - generic [ref=e132]: 
+              - text: Facebook
+          - listitem [ref=e133]:
+            - link "Twitter" [ref=e134] [cursor=pointer]:
+              - /url: https://twitter.com/code_nl
+              - generic [ref=e135]: T
+              - text: Twitter
+          - listitem [ref=e136]:
+            - link "Instagram" [ref=e137] [cursor=pointer]:
+              - /url: https://www.instagram.com/code.nl/
+              - generic [ref=e138]: 
+              - text: Instagram
+        - paragraph [ref=e140]:
+          - text: © 2026,
+          - link "CODE Demo" [ref=e141] [cursor=pointer]:
+            - /url: /
+          - link "Powered by Shopify" [ref=e142] [cursor=pointer]:
+            - /url: https://www.shopify.com?utm_campaign=poweredby&utm_medium=shopify&utm_source=onlinestore
+  - text: s

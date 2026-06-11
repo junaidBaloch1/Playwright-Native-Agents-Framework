@@ -1,0 +1,16 @@
+
+# Playwright
+node_modules/
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/playwright/.auth/
+.env
+playwright/.auth/
+
+# Add these for CI
+playwright-report/
+test-results/
+.env.ci.local
+node_modules/
