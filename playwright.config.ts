@@ -44,40 +44,91 @@
 
 
 
-import dotenv from 'dotenv';
-import path from 'path';
+// import dotenv from 'dotenv';
+// import path from 'path';
 
-// Load .env.ci on CI, .env locally
-const envFile = process.env.CI ? '.env.ci' : '.env';
-dotenv.config({ path: path.resolve(__dirname, envFile) });
+// // Load .env.ci on CI, .env locally
+// const envFile = process.env.CI ? '.env.ci' : '.env';
+// dotenv.config({ path: path.resolve(__dirname, envFile) });
+
+// import { defineConfig, devices } from '@playwright/test';
+
+// export default defineConfig({
+//   testDir: './tests',
+//   fullyParallel: false,
+//   forbidOnly: !!process.env.CI,
+//   retries: process.env.CI ? 2 : 0,
+//   workers: 1,
+
+//   // ← Updated: dual reporter — HTML for artifacts, list for CI logs
+//   reporter: process.env.CI
+//     ? [['list'], ['html', { open: 'never' }]]
+//     : 'html',
+
+//   use: {
+//     baseURL: process.env.BASE_URL || 'https://www.saucedemo.com/',
+//     trace: 'on-first-retry',
+//     screenshot: 'only-on-failure',
+//     storageState: 'playwright/.auth/user.json',
+
+//     // ← Updated: higher timeouts on CI
+//     actionTimeout: Number(process.env.ACTION_TIMEOUT) || 15000,
+//     navigationTimeout: Number(process.env.DEFAULT_TIMEOUT) || 30000,
+//   },
+
+//   expect: {
+//     timeout: Number(process.env.EXPECT_TIMEOUT) || 10000,
+//   },
+
+//   projects: [
+//     {
+//       name: 'setup',
+//       testMatch: /seed\.spec\.ts/,
+//       use: { storageState: undefined },
+//     },
+//     {
+//       name: 'chromium',
+//       use: { ...devices['Desktop Chrome'] },
+//       dependencies: ['setup'],
+//     },
+//   ],
+// });
+
+
 
 import { defineConfig, devices } from '@playwright/test';
+import dotenv from 'dotenv';
+
+const envFile = process.env.CI ? '.env.ci' : '.env';
+dotenv.config({ path: envFile });
 
 export default defineConfig({
   testDir: './tests',
+
   fullyParallel: false,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
   workers: 1,
 
-  // ← Updated: dual reporter — HTML for artifacts, list for CI logs
   reporter: process.env.CI
     ? [['list'], ['html', { open: 'never' }]]
     : 'html',
 
   use: {
-    baseURL: process.env.BASE_URL || 'https://your-store.myshopify.com',
+    baseURL: process.env.BASE_URL || 'https://www.saucedemo.com/',
+
+    headless: false,   // 🔴 IMPORTANT for CI clarity
+
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
     storageState: 'playwright/.auth/user.json',
 
-    // ← Updated: higher timeouts on CI
-    actionTimeout: Number(process.env.ACTION_TIMEOUT) || 15000,
-    navigationTimeout: Number(process.env.DEFAULT_TIMEOUT) || 30000,
+    actionTimeout: 15000,
+    navigationTimeout: 30000,
   },
 
   expect: {
-    timeout: Number(process.env.EXPECT_TIMEOUT) || 10000,
+    timeout: 10000,
   },
 
   projects: [

@@ -32,7 +32,7 @@ jobs:
 
       # 4. Install only Chromium — keeps CI fast and lean
       - name: Install Playwright browsers
-        run: npx playwright install --with-deps chromium
+        run: npx playwright install --with-deps
 
       # 5. Create auth directory so seed.spec.ts never hits ENOENT
       - name: Create auth directory
