@@ -50,7 +50,7 @@ jobs:
           SHOPIFY_STORE_PASSWORD: ${{ secrets.SHOPIFY_STORE_PASSWORD }}
 
       # 7. Run full test suite against Chromium
-      - name: Run Playwright tests
+      - name: Run UI tests
         run: npx playwright test tests/ui
         env:
           BASE_URL: ${{ secrets.BASE_URL }}
