@@ -5,7 +5,7 @@ const envFile = process.env.CI ? '.env.ci' : '.env';
 dotenv.config({ path: envFile });
 
 export default defineConfig({
-  testDir: './tests',
+  testDir: './tests/ui',
 
   fullyParallel: false,
   forbidOnly: !!process.env.CI,
@@ -19,7 +19,7 @@ export default defineConfig({
   use: {
     baseURL: process.env.BASE_URL || 'https://www.saucedemo.com/',
 
-    headless: true,   
+    headless: true,
 
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
@@ -37,7 +37,7 @@ export default defineConfig({
     {
       name: 'setup',
       testMatch: /seed\.spec\.ts/,
-      use: { storageState: undefined },
+      use: { storageState: undefined, headless: true },
     },
     {
       name: 'chromium',
@@ -48,12 +48,13 @@ export default defineConfig({
       name: 'api',
       testDir: './tests/api',
       use: {
-          baseURL: process.env.API_BASE_URL || 'https://fakestoreapi.com/docs',
-      extraHTTPHeaders: {
+        baseURL: process.env.API_BASE_URL || 'https://fakestoreapi.com',
+        storageState: { cookies: [], origins: [] },
+        extraHTTPHeaders: {
           Authorization: process.env.API_AUTH_TOKEN ? `Bearer ${process.env.API_AUTH_TOKEN}` : '',
-    },
-    actionTimeout: parseInt(process.env.API_TIMEOUT || '30000'),
-  },
+        },
+        actionTimeout: parseInt(process.env.API_TIMEOUT || '30000'),
+      },
     },
   ],
 });
