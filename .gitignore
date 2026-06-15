@@ -1,6 +1,7 @@
 
 # Playwright
 node_modules/
+mcp-server/openapi-tools/node_modules/
 /test-results/
 /playwright-report/
 /blob-report/

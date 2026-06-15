@@ -17,12 +17,16 @@
     "test:ci": "playwright test --project=chromium",
     "test:setup": "playwright test --project=setup",
     "test:smoke": "playwright test --project=chromium --grep @smoke",
+
+    "test:api": "playwright test --project=api",
+    
     "test:headed": "cross-env HEADED=true playwright test",
     "test:debug": "cross-env PWDEBUG=1 playwright test",
     "test:trace": "playwright test --trace on",
     "report": "playwright show-report",
     "clean": "rm -rf playwright-report test-results playwright/.auth/user.json",
-    "clean:auth": "echo '{\"cookies\":[],\"origins\":[]}' > playwright/.auth/user.json"
+    "clean:auth": "echo '{\"cookies\":[],\"origins\":[]}' > playwright/.auth/user.json",
+    "setup:api-tools": "npm install --prefix mcp-servers/openapi-tools"
   },
   "devDependencies": {
     "@playwright/test": "^1.60.0",

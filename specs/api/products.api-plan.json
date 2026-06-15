@@ -1,0 +1,55 @@
+[
+  {
+    "feature": "Products",
+    "endpoint": "/products",
+    "method": "GET",
+    "testCases": [
+      {
+        "name": "[Positive] Get product list with default parameters",
+        "expectedStatus": 200,
+        "description": "GET /products returns a list of product objects with expected fields."
+      },
+      {
+        "name": "[Negative] Call /products with unsupported HTTP method POST",
+        "expectedStatus": 405,
+        "description": "The /products endpoint only supports GET; POST should be rejected."
+      },
+      {
+        "name": "[Auth] Not applicable - GET /products is public and has no security requirement",
+        "expectedStatus": 200,
+        "description": "This endpoint does not require authentication."
+      },
+      {
+        "name": "[Authz] Not applicable - no authorization scopes or roles defined for GET /products",
+        "expectedStatus": 200,
+        "description": "No authorization restrictions are documented for this public endpoint."
+      },
+      {
+        "name": "[Validation] Get /products with invalid limit query value",
+        "expectedStatus": 400,
+        "params": {
+          "limit": "abc"
+        },
+        "description": "Invalid numeric query parameter should fail validation."
+      },
+      {
+        "name": "[Boundary] Get /products with limit=1 at minimum allowed list size",
+        "expectedStatus": 200,
+        "params": {
+          "limit": 1
+        },
+        "description": "Boundary test for the smallest valid product page size."
+      },
+      {
+        "name": "[ErrorHandling] Get /products when backend service fails",
+        "expectedStatus": 500,
+        "description": "Server error handling for product retrieval."
+      },
+      {
+        "name": "[SchemaValidation] Verify GET /products response body matches expected product array schema",
+        "expectedStatus": 200,
+        "description": "Response should be an array of product objects containing id, title, price, description, category, image, and rating."
+      }
+    ]
+  }
+]

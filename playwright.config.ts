@@ -44,5 +44,16 @@ export default defineConfig({
       use: { ...devices['Desktop Chrome'] },
       dependencies: ['setup'],
     },
+    {
+      name: 'api',
+      testDir: './tests/api',
+      use: {
+          baseURL: process.env.API_BASE_URL || 'https://fakestoreapi.com/docs',
+      extraHTTPHeaders: {
+          Authorization: process.env.API_AUTH_TOKEN ? `Bearer ${process.env.API_AUTH_TOKEN}` : '',
+    },
+    actionTimeout: parseInt(process.env.API_TIMEOUT || '30000'),
+  },
+    },
   ],
 });

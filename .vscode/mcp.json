@@ -5,7 +5,14 @@
       "command": "npx",
       "args": [
         "playwright",
-        "run-test-mcp-server"
+        "run-test-mcp-server",
+      ]
+    },
+    "api-tools": {
+      "type": "stdio",
+      "command": "node",
+      "args": [
+        "./mcp-servers/openapi-tools/index.js"
       ]
     }
   },

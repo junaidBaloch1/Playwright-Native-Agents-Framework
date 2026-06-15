@@ -1,0 +1,15 @@
+{
+  "name": "openapi-tools-mcp",
+  "version": "1.0.0",
+  "description": "MCP server exposing tools to load Swagger/OpenAPI specs and inspect endpoints/schemas for the api-test-planner agent",
+  "main": "index.js",
+  "type": "module",
+  "license": "ISC",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.4",
+    "@apidevtools/swagger-parser": "^10.1.1"
+  }
+}
