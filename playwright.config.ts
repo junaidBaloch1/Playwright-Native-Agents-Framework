@@ -6,6 +6,8 @@ dotenv.config({ path: envFile });
 
 export default defineConfig({
   testDir: './tests/ui',
+  outputDir: 'test-results',
+  preserveOutput: 'failures-only',
 
   fullyParallel: false,
   forbidOnly: !!process.env.CI,
@@ -48,7 +50,7 @@ export default defineConfig({
       name: 'api',
       testDir: './tests/api',
       use: {
-        baseURL: process.env.API_BASE_URL || 'https://fakestoreapi.com',
+        baseURL: process.env.API_BASE_URL || 'https://social.kualitech.io',
         storageState: { cookies: [], origins: [] },
         extraHTTPHeaders: {
           Authorization: process.env.API_AUTH_TOKEN ? `Bearer ${process.env.API_AUTH_TOKEN}` : '',

@@ -1,0 +1,179 @@
+[
+  {
+    "feature": "Profile",
+    "endpoint": "/me/",
+    "method": "GET",
+    "testCases": [
+      {
+        "name": "[Positive] Get current user info with valid auth",
+        "expectedStatus": 200,
+        "description": "Retrieve authenticated user's profile information"
+      },
+      {
+        "name": "[Authentication] Get user info without auth token",
+        "expectedStatus": 401,
+        "description": "Request should fail when no OAuth2 token is provided"
+      },
+      {
+        "name": "[Authentication] Get user info with invalid/malformed token",
+        "expectedStatus": 401,
+        "description": "Request should fail with a malformed or expired OAuth2 token"
+      },
+      {
+        "name": "[SchemaValidation] Verify response contains all required user fields",
+        "expectedStatus": 200,
+        "description": "Response should contain id, email, name, is_active, registered_as fields with correct types"
+      }
+    ]
+  },
+  {
+    "feature": "Profile",
+    "endpoint": "/me/",
+    "method": "PUT",
+    "testCases": [
+      {
+        "name": "[Positive] Update user profile with valid data",
+        "expectedStatus": 200,
+        "description": "Successfully update name, email, and/or registered_as",
+        "requestBody": {
+          "name": "John Doe",
+          "email": "john.doe@example.com",
+          "registered_as": "Individual"
+        }
+      },
+      {
+        "name": "[Positive] Update user with null values (optional fields)",
+        "expectedStatus": 200,
+        "description": "Update should accept null values for optional fields",
+        "requestBody": {
+          "name": null,
+          "email": null,
+          "registered_as": null
+        }
+      },
+      {
+        "name": "[Authentication] Update profile without auth token",
+        "expectedStatus": 401,
+        "description": "Request should fail when no OAuth2 token is provided"
+      },
+      {
+        "name": "[Authentication] Update profile with invalid token",
+        "expectedStatus": 401,
+        "description": "Request should fail with a malformed or expired OAuth2 token"
+      },
+      {
+        "name": "[Validation] Update with invalid email format",
+        "expectedStatus": 422,
+        "description": "Request should fail validation with malformed email address",
+        "requestBody": {
+          "email": "not-an-email"
+        }
+      },
+      {
+        "name": "[SchemaValidation] Verify updated profile response schema",
+        "expectedStatus": 200,
+        "description": "Response should contain all required fields with correct types after update",
+        "requestBody": {
+          "name": "Updated User",
+          "email": "updated@example.com"
+        }
+      }
+    ]
+  },
+  {
+    "feature": "Profile",
+    "endpoint": "/me/",
+    "method": "PATCH",
+    "testCases": [
+      {
+        "name": "[Positive] Partially update user profile with valid data",
+        "expectedStatus": 200,
+        "description": "Successfully update only name field",
+        "requestBody": {
+          "name": "New Name"
+        }
+      },
+      {
+        "name": "[Positive] Partially update with email only",
+        "expectedStatus": 200,
+        "description": "Successfully update only email field",
+        "requestBody": {
+          "email": "newemail@example.com"
+        }
+      },
+      {
+        "name": "[Positive] Partially update with registered_as only",
+        "expectedStatus": 200,
+        "description": "Successfully update only registered_as field",
+        "requestBody": {
+          "registered_as": "Business"
+        }
+      },
+      {
+        "name": "[Authentication] Update profile without auth token",
+        "expectedStatus": 401,
+        "description": "Request should fail when no OAuth2 token is provided"
+      },
+      {
+        "name": "[Authentication] Update profile with invalid token",
+        "expectedStatus": 401,
+        "description": "Request should fail with a malformed or expired OAuth2 token"
+      },
+      {
+        "name": "[Validation] Update with invalid email format",
+        "expectedStatus": 422,
+        "description": "Request should fail validation with malformed email address",
+        "requestBody": {
+          "email": "invalid-email-format"
+        }
+      },
+      {
+        "name": "[SchemaValidation] Verify patched profile response schema",
+        "expectedStatus": 200,
+        "description": "Response should contain all required fields with correct types after partial update",
+        "requestBody": {
+          "name": "Patched User"
+        }
+      }
+    ]
+  },
+  {
+    "feature": "Profile",
+    "endpoint": "/me/registered-as",
+    "method": "PUT",
+    "testCases": [
+      {
+        "name": "[Positive] Update registered_as field with valid value",
+        "expectedStatus": 200,
+        "description": "Successfully update registered_as field",
+        "requestBody": {
+          "registered_as": "Corporation"
+        }
+      },
+      {
+        "name": "[Authentication] Update registered_as without auth token",
+        "expectedStatus": 401,
+        "description": "Request should fail when no OAuth2 token is provided"
+      },
+      {
+        "name": "[Authentication] Update registered_as with invalid token",
+        "expectedStatus": 401,
+        "description": "Request should fail with a malformed or expired OAuth2 token"
+      },
+      {
+        "name": "[Validation] Update with missing required registered_as field",
+        "expectedStatus": 422,
+        "description": "Request should fail validation when registered_as is not provided",
+        "requestBody": {}
+      },
+      {
+        "name": "[SchemaValidation] Verify registered_as update response schema",
+        "expectedStatus": 200,
+        "description": "Response should contain all required fields with correct types",
+        "requestBody": {
+          "registered_as": "Partnership"
+        }
+      }
+    ]
+  }
+]

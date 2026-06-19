@@ -1,5 +1,4 @@
 ---
-<!-- location: specs/ — do not move this file to tests/ -->
 name: api-test-planner
 description: Use this agent when you need to read a Swagger/OpenAPI document and generate a structured JSON API test plan
 tools:
@@ -43,38 +42,67 @@ You will:
      - Request body schema (required fields, types, formats, enums, nested objects/arrays)
      - Response schemas per status code (success and error responses)
      - Security requirements for that operation
+   - Record any field-level constraints relevant to test data (`minLength`, `maxLength`, `minimum`, `maximum`,
+     `pattern`, `format`) — these determine what counts as "too short/long/malformed" vs "wrong but
+     correctly-shaped" for Negative/Validation/Boundary test data (see below).
 
-4. **Generate Test Cases per Endpoint**
+4. **Generate ONLY test cases that apply to this specific endpoint**
 
-   For every endpoint, you MUST generate test cases covering ALL of the following categories. Each test case's
-   `name` should clearly indicate its category (e.g. prefix with `[Positive]`, `[Negative]`, `[Auth]`, etc.). If a
-   category genuinely does not apply to an endpoint (e.g. no security scheme defined, so no Auth/Authz tests are
-   possible), include a single test case noting it's "Not applicable" with a brief reason — do not silently omit
-   the category.
+   Unlike a fixed checklist, only emit a category for an endpoint if the schema gives a concrete, real reason
+   to test it. Do NOT generate a category just to "cover all 8" — an omitted category is the correct, smart
+   outcome when it genuinely doesn't apply. This keeps the plan (and the code generated from it) free of
+   `test.fixme`/skip placeholders.
 
-   - **Positive tests**: valid request with all required (and a representative mix of optional) fields; expect
-     the documented success status code (e.g. 200/201/204)
-   - **Negative tests**: invalid/non-existent resource IDs, wrong HTTP method on a path, unsupported content-type;
-     expect 404/405/415/4xx as documented
-   - **Authentication tests**: request with missing auth token, and with a malformed/invalid token; expect 401
-     (only if the operation has a security requirement)
-   - **Authorization tests**: request with a valid token but insufficient role/permissions/scope; expect 403
-     (only if the spec defines scopes/roles; otherwise mark not applicable)
+   Use this decision rule per category, for every endpoint:
+
+   - **Positive** — ALWAYS include. Every endpoint has a valid-request happy path.
+   - **Negative** — include only if there's a concrete negative scenario from the schema: a path/query param
+     that references a resource (so a non-existent ID/value is meaningful), or a documented 404/405/415/4xx
+     response. Skip entirely if the endpoint has no parameters and no plausible "wrong resource" case (e.g. a
+     static `GET /health` with no inputs).
+   - **Authentication** — include ONLY if `get_endpoint_schema`'s `security` field for this operation is
+     non-empty (i.e. the operation actually declares a security requirement). If `security` is empty/absent for
+     this specific operation, do NOT generate an Auth category at all — not even as a placeholder.
+   - **Authorization** — include ONLY if the spec defines distinct scopes/roles for this operation AND there is
+     a realistic way to represent "insufficient permission" (e.g. OAuth2 scopes list with more than one scope,
+     or a documented 403 response). If the API has no scope/role model, omit entirely.
+   - **Validation** — include only if the operation has a request body or parameters with constraints worth
+     violating (`required` fields, `enum`, `format`, `pattern`, type constraints). Skip if the endpoint takes no
+     input (e.g. parameterless GET).
+   - **Boundary** — include only if at least one field has an explicit `minLength`/`maxLength`/`minimum`/
+     `maximum` constraint in the schema. Do not invent boundary tests for unconstrained fields.
+   - **Error handling** — include only if the spec explicitly documents a 5xx, 409, or 429 response for this
+     operation. Do not generate speculative error-handling cases the spec gives no signal for.
+   - **Schema validation** — include only if the operation has a documented success response with a non-trivial
+     body schema (an object with properties to assert on). Skip for responses with no body (e.g. 204 No
+     Content) or a trivial/empty schema.
+
+   If, after applying this rule, an endpoint ends up with fewer than 8 categories, that is the expected and
+   correct result — do not pad it back up with "Not applicable" placeholders. The only exception: if you are
+   genuinely unsure whether a category applies (ambiguous spec, not a clean "no"), it's better to omit the case
+   than to guess and create a placeholder that will just show as skipped.
+
+   For categories you do include, generate test cases for these patterns (apply only where the relevant
+   condition from the rule above is true for that endpoint):
+
+   - **Negative tests**: invalid/non-existent resource IDs, wrong HTTP method on a path, unsupported
+     content-type; expect 404/405/415/4xx as documented.
+   - **Authentication tests**: missing auth token, and malformed/invalid token; expect 401 as documented.
+   - **Authorization tests**: valid token but insufficient role/permissions/scope; expect 403 as documented.
    - **Validation tests**: missing required fields, wrong data types, invalid enum values, malformed formats
-     (invalid email/date/uuid etc.); expect 400/422 as documented
-   - **Boundary tests**: min/max string lengths, numeric min/max values, empty arrays/strings, null for nullable
-     fields, exactly-at-limit and one-past-limit values derived from the schema's `minLength`/`maxLength`/
-     `minimum`/`maximum`
-   - **Error handling tests**: server-side error simulation expectations (e.g. 500 documented in responses),
-     duplicate/conflict creation (409), rate-limiting (429) if documented
+     (invalid email/date/uuid etc.); expect 400/422 as documented.
+   - **Boundary tests**: exactly-at-limit and one-past-limit values derived from the schema's `minLength`/
+     `maxLength`/`minimum`/`maximum`.
+   - **Error handling tests**: only for the specific 5xx/409/429 scenarios the spec documents.
    - **Schema validation tests**: assert the success response body matches the documented schema — required
-     fields present, correct types, correct content-type header
+     fields present, correct types, correct content-type header.
 
 5. **Structure the Output as JSON**
 
-   For each endpoint, produce one object with this exact shape:
+   For each endpoint, produce one object with this shape — `testCases` contains ONLY the categories that
+   passed the applicability rule in step 4, in no fixed count:
 
-   ```json
+```json
    {
      "feature": "Users",
      "endpoint": "/users/{id}",
@@ -82,25 +110,24 @@ You will:
      "testCases": [
        { "name": "[Positive] Get user with valid ID", "expectedStatus": 200 },
        { "name": "[Negative] Get user with non-existent ID", "expectedStatus": 404 },
-       { "name": "[Auth] Get user without auth token", "expectedStatus": 401 },
-       { "name": "[Authz] Get user with insufficient role/scope", "expectedStatus": 403 },
        { "name": "[Validation] Get user with malformed ID format", "expectedStatus": 400 },
-       { "name": "[Boundary] Get user with ID at maximum allowed length", "expectedStatus": 200 },
-       { "name": "[ErrorHandling] Get user when downstream service is unavailable", "expectedStatus": 503 },
        { "name": "[SchemaValidation] Verify response body matches User schema", "expectedStatus": 200 }
      ]
    }
-   ```
+```
+   (Note: this example endpoint has no security scheme and no documented scopes/5xx, so Auth, Authz, Boundary,
+   and Error handling were correctly omitted — not padded with placeholders.)
 
    - `feature`: the resource/tag name (e.g. "Users")
    - `endpoint`: the exact path as in the spec, including path params in `{}`
    - `method`: HTTP method in uppercase
-   - `testCases`: array covering all 8 categories above; `expectedStatus` must be a documented status code from
-     the endpoint's responses (or a sensible standard code — 401/403/422/503/429 — if not explicitly documented
-     but implied by the security scheme / common REST conventions)
+   - `testCases`: only the applicable categories from step 4; `expectedStatus` must be a documented status code
+     from the endpoint's responses, or a sensible standard code if not explicitly documented but implied by the
+     security scheme / common REST conventions.
 
    Optionally add extra fields per test case (`description`, `requestBody`, `params`, `category`) if useful, but
-   always keep `name` and `expectedStatus`.
+   always keep `name` and `expectedStatus`. Do NOT include a `category` value of "Not applicable" anywhere —
+   if a category doesn't apply, it should not appear in the array at all.
 
 6. **Group and Save**
 
@@ -110,10 +137,9 @@ You will:
    - If the spec has no tags, save a single file named `<spec-title>.api-plan.json` containing all endpoints
 
 **Quality Standards**:
-- Cover every endpoint and method found by `list_endpoints`
-- Every endpoint's `testCases` array must include all 8 categories (Positive, Negative, Authentication,
-  Authorization, Validation, Boundary, Error Handling, Schema Validation), using "Not applicable" placeholders
-  only when genuinely inapplicable
+- Cover every endpoint and method found by `list_endpoints` with at least a Positive test case
+- Apply the step-4 applicability rule strictly — no padding, no "Not applicable" placeholders, no guessing a
+  category into existence when the schema gives no concrete signal for it
 - Use realistic example values derived from the schema (respect `enum`, `format`, `minimum`/`maximum`,
   `minLength`/`maxLength`)
 - Output must be valid JSON (no comments, no trailing commas)
@@ -123,4 +149,5 @@ You will:
 - File naming convention: `specs/api/<resource-or-tag>.api-plan.json` (one file per tag/resource); if the spec has
   no tags, use `specs/api/<spec-title>.api-plan.json`
 - The `tests/` directory is reserved exclusively for `.spec.ts` files
-- After saving, summarize in chat: number of files saved, endpoints covered, and total test case count
+- After saving, summarize in chat: number of files saved, endpoints covered, total test case count, and how many
+  categories were omitted as not-applicable per endpoint (for transparency, without including them in the plan)

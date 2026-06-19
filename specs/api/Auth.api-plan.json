@@ -1,0 +1,109 @@
+[
+  {
+    "feature": "Auth",
+    "endpoint": "/register/",
+    "method": "POST",
+    "testCases": [
+      {
+        "name": "[Positive] Register user with valid email, password, and name",
+        "expectedStatus": 201
+      },
+      {
+        "name": "[Validation] Register user missing required name",
+        "expectedStatus": 422
+      },
+      {
+        "name": "[Validation] Register user with malformed email",
+        "expectedStatus": 422
+      },
+      {
+        "name": "[SchemaValidation] Verify register response matches RegisterResponse schema",
+        "expectedStatus": 201
+      }
+    ]
+  },
+  {
+    "feature": "Auth",
+    "endpoint": "/register/verify-email",
+    "method": "GET",
+    "testCases": [
+      {
+        "name": "[Positive] Verify email link with valid token query parameter",
+        "expectedStatus": 200
+      },
+      {
+        "name": "[Validation] Verify email link missing token query parameter",
+        "expectedStatus": 422
+      },
+      {
+        "name": "[Boundary] Verify email link with token shorter than minimum length",
+        "expectedStatus": 422
+      }
+    ]
+  },
+  {
+    "feature": "Auth",
+    "endpoint": "/register/resend-verification-email",
+    "method": "POST",
+    "testCases": [
+      {
+        "name": "[Positive] Resend verification email with valid registered email",
+        "expectedStatus": 200
+      },
+      {
+        "name": "[Validation] Resend verification email missing email",
+        "expectedStatus": 422
+      },
+      {
+        "name": "[Validation] Resend verification email with invalid email format",
+        "expectedStatus": 422
+      },
+      {
+        "name": "[SchemaValidation] Verify resend verification email response matches ResendVerificationResponse schema",
+        "expectedStatus": 200
+      }
+    ]
+  },
+  {
+    "feature": "Auth",
+    "endpoint": "/register/resend-verification",
+    "method": "POST",
+    "testCases": [
+      {
+        "name": "[Positive] Resend verification email while authenticated",
+        "expectedStatus": 200
+      },
+      {
+        "name": "[Authentication] Resend verification email with missing auth token",
+        "expectedStatus": 401
+      },
+      {
+        "name": "[SchemaValidation] Verify resend verification response matches ResendVerificationResponse schema",
+        "expectedStatus": 200
+      }
+    ]
+  },
+  {
+    "feature": "Auth",
+    "endpoint": "/login/",
+    "method": "POST",
+    "testCases": [
+      {
+        "name": "[Positive] Login for access token with valid username and password",
+        "expectedStatus": 200
+      },
+      {
+        "name": "[Validation] Login for access token missing password",
+        "expectedStatus": 422
+      },
+      {
+        "name": "[Validation] Login for access token with invalid grant_type",
+        "expectedStatus": 422
+      },
+      {
+        "name": "[SchemaValidation] Verify login access token response matches LoginAccessTokenResponse schema",
+        "expectedStatus": 200
+      }
+    ]
+  }
+]

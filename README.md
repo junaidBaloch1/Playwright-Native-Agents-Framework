@@ -388,6 +388,9 @@ endpoint, one `test()` per test case (category-driven request/auth/payload/asser
 npx playwright test --project=api
 npm run test:api
 npm run test:api -- tests/api/pet.api.spec.ts
+
+**Save api json in api-specs locally:**
+curl -s https://social.kualitech.io/openapi.json -o api-specs/social-kualitech.openapi.json
 ```
 
 ---

@@ -17,9 +17,7 @@
     "test:ci": "playwright test --project=chromium",
     "test:setup": "playwright test --project=setup",
     "test:smoke": "playwright test --project=chromium --grep @smoke",
-
     "test:api": "playwright test --project=api",
-    
     "test:headed": "cross-env HEADED=true playwright test",
     "test:debug": "cross-env PWDEBUG=1 playwright test",
     "test:trace": "playwright test --trace on",
@@ -30,7 +28,7 @@
   },
   "devDependencies": {
     "@playwright/test": "^1.60.0",
-    "@types/node": "^25.9.1",
+    "@types/node": "^25.9.3",
     "cross-env": "^7.0.3",
     "dotenv": "^17.4.2"
   }

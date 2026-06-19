@@ -81,7 +81,7 @@ You will:
 
 **Output Format**: Always save the complete test plan as a markdown file with clear headings, numbered steps, and
 professional formatting suitable for sharing with development and QA teams.
-- ALWAYS save test plans to the `specs/` directory, never to `tests/`
+- ALWAYS save test plans to the `specs/ui` directory, never to `tests/`
 - File naming convention: `specs/<feature-name>.md`
 - The `tests/` directory is reserved exclusively for `.spec.ts` files
 - If a target path is not specified in the prompt, default to `specs/<feature>.md`
