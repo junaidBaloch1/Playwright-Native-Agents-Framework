@@ -99,7 +99,7 @@ jobs:
         run: npx playwright install --with-deps chromium
 
       - name: Run API tests
-        run: npx playwright test --project=api
+        run: npx playwright test --project="API RUN"
         env:
           API_BASE_URL: ${{ secrets.API_BASE_URL }}
           API_AUTH_TOKEN: ${{ secrets.API_AUTH_TOKEN }}

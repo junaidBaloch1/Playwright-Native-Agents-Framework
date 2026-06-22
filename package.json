@@ -30,7 +30,7 @@
     "allure:open": "npx allure open allure-report",
     "test:allure": "npm run allure:clean && npm run test; npm run allure:generate && npm run allure:open",
     "test:ui": "npm run allure:clean && npx playwright test --project=chromium; npm run allure:generate && npm run allure:open",
-    "test:api": "npm run allure:clean && npx playwright test --project=api; npm run allure:generate && npm run allure:open"
+    "test:api": "npm run allure:clean && npx playwright test --project=\"API RUN\"; npm run allure:generate && npm run allure:open"
   
   },
   "devDependencies": {
