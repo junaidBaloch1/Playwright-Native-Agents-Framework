@@ -52,6 +52,7 @@ application behavior.
     Never write UI spec files directly to `tests/` root.
   - Test must be placed in a describe matching the top-level test plan item
   - Test title must match the scenario name
+  - **Allure Reporting Integration:** You must import `allure` from `allure-playwright` and set metadata metrics explicitly inside the `test` block.
   - Includes a comment with the step text before each step execution. Do not duplicate comments if step requires
     multiple actions.
   - Always use best practices from the log when generating tests.
@@ -77,8 +78,16 @@ application behavior.
    // spec: specs/plan.md
    // seed: tests/ui/seed.spec.ts
 
+   import { test, expect } from '@playwright/test';
+   import { allure } from 'allure-playwright';
+
    test.describe('Adding New Todos', () => {
-     test('Add Valid Todo', async { page } => {
+     test('Add Valid Todo', async ({ page }) => {
+       // Allure Metadata Annotations
+       allure.epic('E-Commerce UI Flows');
+       allure.feature('Adding New Todos');
+       allure.owner('AgentQAI - UI Generator');
+
        // 1. Click in the "What needs to be done?" input field
        await page.click(...);
 

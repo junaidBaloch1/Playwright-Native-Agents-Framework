@@ -15,8 +15,15 @@ export default defineConfig({
   workers: 1,
 
   reporter: process.env.CI
-    ? [['list'], ['html', { open: 'never' }]]
-    : 'html',
+  ? [
+      ['list'],
+      ['html', { open: 'never' }],
+      ['allure-playwright', { outputFolder: 'allure-results' }]
+    ]
+  : [
+      ['html'],
+      ['allure-playwright', { outputFolder: 'allure-results' }]
+    ],
 
   use: {
     baseURL: process.env.BASE_URL || 'https://www.saucedemo.com/',
@@ -25,6 +32,7 @@ export default defineConfig({
 
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
+    video: 'retain-on-failure',
     storageState: 'playwright/.auth/user.json',
 
     actionTimeout: 15000,
@@ -42,12 +50,12 @@ export default defineConfig({
       use: { storageState: undefined, headless: true },
     },
     {
-      name: 'chromium',
+      name: 'UI RUN',
       use: { ...devices['Desktop Chrome'] },
       dependencies: ['setup'],
     },
     {
-      name: 'api',
+      name: 'API RUN',
       testDir: './tests/api',
       use: {
         baseURL: process.env.API_BASE_URL || 'https://social.kualitech.io',

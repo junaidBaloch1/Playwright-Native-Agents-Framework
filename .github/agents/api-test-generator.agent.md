@@ -167,3 +167,15 @@ tested against a live external API:
 - Valid, compilable TypeScript; use `import { test, expect } from '@playwright/test'`.
 - After writing each file, report: file path, number of `describe` blocks, number of tests generated
   (including `fixme` placeholders).
+  
+## Allure API Metadata Standards (Strict Rules)
+
+When converting JSON test plans into executable spec files, you MUST strictly adhere to these reporting rules:
+
+1. **Dependency Verification**: Every generated API test file must include `import { allure } from 'allure-playwright';` at the very top alongside the Playwright test import.
+2. **Dynamic Block Structuring**: Within each individual test execution block (`test(name, async ({ request }) => { ... })`), you must immediately initialize the following metadata properties before performing any test steps or HTTP requests:
+   - `allure.epic('Backend Core API Services');`
+   - `allure.feature(feature);` (Inject the feature name variable parsed directly from the root JSON plan object)
+   - `allure.owner('AgentQAI - API Generator');`
+3. **Execution Block Wrapping**: You must wrap the building of the endpoint URL, the network request execution, and the validation assertions inside an explicit `test.step()` method block so that every action step is clearly broken down sequentially in the Allure report UI.
+4. **Placeholder Tracking**: For untestable scenarios utilizing `test.fixme()`, always include `allure.tag('untestable-placeholder');` immediately within the function body to group placeholder gaps cleanly inside the reporting dashboard.

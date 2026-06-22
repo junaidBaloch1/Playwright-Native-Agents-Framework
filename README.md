@@ -240,6 +240,17 @@ HEADED=true npx playwright test
 
 # Open the HTML report after a run
 npx playwright show-report
+
+# open run generate allure reports
+npm run allure:generate
+
+npm run test:allure
+
+npm run allure:open
+
+npm run test:ui
+
+npm run test:api
 ```
 
 ---
