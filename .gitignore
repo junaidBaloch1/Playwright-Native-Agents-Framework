@@ -17,3 +17,4 @@ test-results/
 node_modules/
 allure-results/
 allure-report/
+.allure-history/

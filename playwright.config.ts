@@ -1,5 +1,7 @@
 import { defineConfig, devices } from '@playwright/test';
+import { Status } from 'allure-js-commons';
 import dotenv from 'dotenv';
+import * as os from 'node:os';
 
 const envFile = process.env.CI ? '.env.ci' : '.env';
 dotenv.config({ path: envFile });
@@ -14,16 +16,43 @@ export default defineConfig({
   retries: process.env.CI ? 2 : 0,
   workers: 1,
 
-  reporter: process.env.CI
-  ? [
-      ['list'],
-      ['html', { open: 'never' }],
-      ['allure-playwright', { outputFolder: 'allure-results' }]
-    ]
-  : [
-      ['html'],
-      ['allure-playwright', { outputFolder: 'allure-results' }]
+  reporter: [
+    ['line'], // Compact progress row logger
+    ['html',  { open: 'never' }], // HTML report for detailed insights
+    [
+      'allure-playwright',
+      {
+        outputFolder: 'allure-results',
+        detail: true,
+        suiteTitle: true,
+
+        // 2. Automated Category Groupings (Defects Tab)
+        categories: [
+          {
+            name: 'AI Self-Healing Failures',
+            messageRegex: '.*[Hh]eal.*', 
+            traceRegex: '.*',
+            matchedStatuses: [Status.FAILED, Status.BROKEN],
+          },
+          {
+            name: 'API Validation Mismatches',
+            messageRegex: '.*status.*|.*Property.*',
+            traceRegex: '.*',
+            matchedStatuses: [Status.FAILED],
+          }
+        ],
+
+        // 3. Dynamic Host Environment Metrics on Dashboard
+        environmentInfo: {
+          os_platform: os.platform(),
+          os_release: os.release(),
+          os_version: os.version(),
+          node_version: process.version,
+          Execution_Context: process.env.CI ? 'GitHub Actions CI' : 'Local Terminal',
+        },
+      },
     ],
+  ],
 
   use: {
     baseURL: process.env.BASE_URL || 'https://www.saucedemo.com/',

@@ -24,14 +24,16 @@
     "clean": "rm -rf playwright-report test-results playwright/.auth/user.json",
     "clean:auth": "echo '{\"cookies\":[],\"origins\":[]}' > playwright/.auth/user.json",
     "setup:api-tools": "npm install --prefix mcp-servers/openapi-tools",
-
+    
+    "allure:save-history": "mkdirp .allure-history && shx cp -r allure-report/history/. .allure-history/ || true",
     "allure:clean": "rimraf allure-results allure-report",
+    "allure:pre-report": "mkdirp allure-results/history && shx cp -r .allure-history/. allure-results/history/ || true",
     "allure:generate": "npx allure generate allure-results --clean -o allure-report",
     "allure:open": "npx allure open allure-report",
-    "test:allure": "npm run allure:clean && npm run test; npm run allure:generate && npm run allure:open",
-    "test:ui": "npm run allure:clean && npx playwright test --project=chromium; npm run allure:generate && npm run allure:open",
-    "test:api": "npm run allure:clean && npx playwright test --project=\"API RUN\"; npm run allure:generate && npm run allure:open"
-  
+
+    "test:allure": "npm run allure:save-history && npm run allure:clean && npm run allure:pre-report && npm run test; npm run allure:generate && npm run allure:open",
+    "test:ui": "npm run allure:save-history && npm run allure:clean && npm run allure:pre-report && npx playwright test --project=\"UI RUN\"; npm run allure:generate && npm run allure:open",
+    "test:api": "npm run allure:save-history && npm run allure:clean && npm run allure:pre-report && npx playwright test --project=\"API RUN\"; npm run allure:generate && npm run allure:open"
   },
   "devDependencies": {
     "@playwright/test": "^1.60.0",
@@ -40,7 +42,9 @@
     "allure-playwright": "^3.10.0",
     "cross-env": "^7.0.3",
     "dotenv": "^17.4.2",
-    "rimraf": "^6.1.3"
+    "mkdirp": "^3.0.1",
+    "rimraf": "^6.1.3",
+    "shx": "^0.4.0"
   },
   "dependencies": {
     "node": "^26.3.1"
