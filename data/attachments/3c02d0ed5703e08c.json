@@ -1,0 +1,15 @@
+[
+  {
+    "method": "POST",
+    "url": "/login/",
+    "requestBody": null,
+    "status": 200,
+    "statusText": "OK",
+    "responseBody": {
+      "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Imp1bmFpZEBnbWFpbC5jb20iLCJleHAiOjE3ODQ4OTE0MzB9.Og_RC8ppz1yHYsTz37bnc3-IO0BUrlKAk6DPeRchw1o",
+      "token_type": "bearer",
+      "email_verified": false
+    },
+    "durationMs": 336
+  }
+]

@@ -1,0 +1,23 @@
+[
+  {
+    "method": "GET",
+    "url": "/register/verify-email",
+    "requestBody": null,
+    "status": 422,
+    "statusText": "Unprocessable Entity",
+    "responseBody": {
+      "detail": [
+        {
+          "type": "missing",
+          "loc": [
+            "query",
+            "token"
+          ],
+          "msg": "Field required",
+          "input": null
+        }
+      ]
+    },
+    "durationMs": 535
+  }
+]
