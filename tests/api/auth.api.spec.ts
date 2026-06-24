@@ -16,7 +16,7 @@ function uniqueEmail(prefix: string = 'testuser'): string {
 }
 
 test.describe('Auth', () => {
-  test.describe('POST /wrong/', () => {
+  test.describe('POST /register/', () => {
     test('[Positive] Register user with valid email, password, and name', async ({ request }) => {
       const data = {
         email: uniqueEmail('testnew'),
@@ -31,7 +31,7 @@ test.describe('Auth', () => {
         });
 
         await test.step('Assert response status', async () => {
-          await expectStatus(response, 201, 'POST /register/ positive case');
+          await expectStatus(response, 20, 'POST /register/ positive case');
         });
       });
     });

@@ -74,15 +74,28 @@ export default defineConfig({
 
   projects: [
     {
-      name: 'setup',
+      name: 'ui setup',
       testMatch: /seed\.spec\.ts/,
       use: { storageState: undefined, headless: true },
     },
     {
       name: 'UI RUN',
       use: { ...devices['Desktop Chrome'] },
-      dependencies: ['setup'],
+      dependencies: ['ui setup'],
     },
+    {
+      name: 'api-setup',
+      testMatch: /seed\.api\.spec\.ts/,
+      use: {
+        baseURL: process.env.API_BASE_URL || 'https://social.kualitech.io',
+        storageState: { cookies: [], origins: [] },
+        extraHTTPHeaders: {
+          Authorization: process.env.API_AUTH_TOKEN ? `Bearer ${process.env.API_AUTH_TOKEN}` : '',
+        },
+        actionTimeout: parseInt(process.env.API_TIMEOUT || '30000'),
+      },
+    },
+
     {
       name: 'API RUN',
       testDir: './tests/api',

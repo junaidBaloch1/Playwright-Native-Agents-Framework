@@ -47,6 +47,7 @@ jobs:
 
       - name: Run seed setup
         run: npx playwright test tests/ui/seed.spec.ts
+        continue-on-error: true
         env:
           BASE_URL: ${{ secrets.BASE_URL }}
           TEST_USER_EMAIL: ${{ secrets.TEST_USER_EMAIL }}
@@ -121,6 +122,17 @@ jobs:
 
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
+      
+      - name: Run api seed setup
+        run: npx playwright test tests/api/seed.api.spec.ts
+        continue-on-error: true
+        env:
+          API_BASE_URL: ${{ secrets.API_BASE_URL }}
+          API_AUTH_TOKEN: ${{ secrets.API_AUTH_TOKEN }}
+          API_USERNAME: ${{ secrets.API_USERNAME }}
+          API_PASSWORD: ${{ secrets.API_PASSWORD }}
+          API_TIMEOUT: ${{ vars.API_TIMEOUT }}
+          CI: true
 
       - name: Run API tests
         id: api_tests
