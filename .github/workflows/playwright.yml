@@ -52,6 +52,7 @@ jobs:
           SHOPIFY_STORE_PASSWORD: ${{ secrets.SHOPIFY_STORE_PASSWORD }}
 
       - name: Run UI tests
+        id: ui_tests
         run: npx playwright test tests/ui
         continue-on-error: true
         env:
@@ -71,7 +72,7 @@ jobs:
 
       - name: Upload traces on failure
         uses: actions/upload-artifact@v4
-        if: failure()
+        if: steps.ui_tests.outcome == 'failure'
         with:
           name: playwright-traces-ui-${{ github.run_id }}
           path: test-results/
@@ -103,6 +104,7 @@ jobs:
         run: npx playwright install --with-deps chromium
 
       - name: Run API tests
+        id: api_tests
         run: npx playwright test --project="API RUN"
         continue-on-error: true
         env:
@@ -120,6 +122,14 @@ jobs:
           name: allure-results-api
           path: allure-results/
           retention-days: 1
+
+      - name: Upload traces on failure
+        uses: actions/upload-artifact@v4
+        if: steps.api_tests.outcome == 'failure'
+        with:
+          name: playwright-traces-api-${{ github.run_id }}
+          path: test-results/
+          retention-days: 7
 
   # ─────────────────────────────────────────────
   # JOB 3: COMBINED REPORT + SLACK NOTIFICATION
@@ -182,6 +192,15 @@ jobs:
           publish_dir: allure-report
           keep_files: false
 
+      # ── Upload Allure report as artifact ──
+      - name: Upload Allure report artifact
+        uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: allure-report-${{ github.run_id }}
+          path: allure-report/
+          retention-days: 30
+
       # ── Parse summary for Slack ──
       - name: Parse Allure summary
         id: summary
@@ -226,9 +245,9 @@ jobs:
                   "fields": [
                     { "type": "mrkdwn", "text": "*Total:*                   ${{ steps.summary.outputs.total }}" },
                     { "type": "mrkdwn", "text": "*Passed:*                    ${{ steps.summary.outputs.passed }}" },
-                    { "type": "mrkdwn", "text": "*Failed:*                   ${{ steps.summary.outputs.failed }}" },
+                    { "type": "mrkdwn", "text": "*Failed:*                  ${{ steps.summary.outputs.failed }}" },
                     { "type": "mrkdwn", "text": "*Broken:*                    ${{ steps.summary.outputs.broken }}" },
-                    { "type": "mrkdwn", "text": "*Skipped:*               ${{ steps.summary.outputs.skipped }}" }
+                    { "type": "mrkdwn", "text": "*Skipped:*              ${{ steps.summary.outputs.skipped }}" }
                   ]
                 },
                 {
