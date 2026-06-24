@@ -1,3 +1,0 @@
-#1 GET /register/verify-email → 422 Unprocessable Entity (227ms)
-   request: {"token":"short"}
-   response: {"detail":[{"type":"string_too_short","loc":["query","token"],"msg":"String should have at least 16 characters","input":"short","ctx":{"min_length":16}}]}

@@ -1,3 +1,0 @@
-#1 POST /register/resend-verification-email → 200 OK (229ms)
-   request: {"email":"testnow+1782303279625@example.com"}
-   response: {"message":"We could not send the email right now. Please try again in a few minutes.","verification_email_sent":false}
