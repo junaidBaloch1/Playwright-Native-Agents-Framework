@@ -31,7 +31,7 @@ test.describe('Auth', () => {
         });
 
         await test.step('Assert response status', async () => {
-          await expectStatus(response, 20, 'POST /register/ positive case');
+          await expectStatus(response, 201, 'POST /register/ positive case');
         });
       });
     });
