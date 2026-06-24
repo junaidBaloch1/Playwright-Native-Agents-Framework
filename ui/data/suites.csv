@@ -1,4 +1,4 @@
 "DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
-"","220","seed","setup","2026-06-24","passed","2026-06-24","Test group","seed.spec.ts","",""
-"","871","Complete checkout from login through order confirmation","UI RUN","2026-06-24","passed","2026-06-24","Saucedemo Purchase Flow","saucedemo-checkout.spec.ts","",""
-"","233","seed","UI RUN","2026-06-24","passed","2026-06-24","Test group","seed.spec.ts","",""
+"","232","seed","setup","2026-06-24","passed","2026-06-24","Test group","seed.spec.ts","",""
+"","917","Complete checkout from login through order confirmation","UI RUN","2026-06-24","passed","2026-06-24","Saucedemo Purchase Flow","saucedemo-checkout.spec.ts","",""
+"","241","seed","UI RUN","2026-06-24","passed","2026-06-24","Test group","seed.spec.ts","",""
