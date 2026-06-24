@@ -5,6 +5,6 @@ test.describe('Test group', () => {
   test('seed', async ({ page }) => {
     // generate code here.
     await allure.parentSuite('UI RUN');
-    await allure.suite('ui setup');
+    // await allure.suite('ui setup');
   });
 });

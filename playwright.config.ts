@@ -80,6 +80,7 @@ export default defineConfig({
     },
     {
       name: 'UI RUN',
+      testIgnore: /seed\.spec\.ts/,   // ← exclude seed from UI RUN
       use: { ...devices['Desktop Chrome'] },
       dependencies: ['ui setup'],
     },
@@ -100,6 +101,7 @@ export default defineConfig({
     {
       name: 'API RUN',
       testDir: './tests/api',
+      testIgnore: /seed\.api\.spec\.ts/,   // ← exclude seed from API RUN
       use: {
         baseURL: process.env.API_BASE_URL || 'https://social.kualitech.io',
         storageState: { cookies: [], origins: [] },

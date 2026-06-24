@@ -19,7 +19,7 @@ test.describe('Seed', () => {
   test('seed', async ({ request }) => {
     // generate code here.
      await allure.parentSuite('API RUN');
-     await allure.suite('api-setup');
+    //  await allure.suite('api-setup');
     
   });
 });
