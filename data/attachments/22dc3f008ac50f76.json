@@ -1,0 +1,28 @@
+[
+  {
+    "method": "GET",
+    "url": "/register/verify-email",
+    "requestBody": {
+      "token": "short"
+    },
+    "status": 422,
+    "statusText": "Unprocessable Entity",
+    "responseBody": {
+      "detail": [
+        {
+          "type": "string_too_short",
+          "loc": [
+            "query",
+            "token"
+          ],
+          "msg": "String should have at least 16 characters",
+          "input": "short",
+          "ctx": {
+            "min_length": 16
+          }
+        }
+      ]
+    },
+    "durationMs": 180
+  }
+]
