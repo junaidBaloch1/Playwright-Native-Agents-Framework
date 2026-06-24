@@ -226,9 +226,9 @@ jobs:
                   "fields": [
                     { "type": "mrkdwn", "text": "*Total:*                   ${{ steps.summary.outputs.total }}" },
                     { "type": "mrkdwn", "text": "*Passed:*                    ${{ steps.summary.outputs.passed }}" },
-                    { "type": "mrkdwn", "text": "*Failed:*                    ${{ steps.summary.outputs.failed }}" },
+                    { "type": "mrkdwn", "text": "*Failed:*                   ${{ steps.summary.outputs.failed }}" },
                     { "type": "mrkdwn", "text": "*Broken:*                    ${{ steps.summary.outputs.broken }}" },
-                    { "type": "mrkdwn", "text": "*Skipped:*                   ${{ steps.summary.outputs.skipped }}" }
+                    { "type": "mrkdwn", "text": "*Skipped:*                 ${{ steps.summary.outputs.skipped }}" }
                   ]
                 },
                 {
