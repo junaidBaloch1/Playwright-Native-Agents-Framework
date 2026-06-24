@@ -43,7 +43,7 @@ test.describe('Saucedemo Purchase Flow', () => {
     await expect(page.locator('.cart_item')).toContainText('Sauce Labs Backpack');
 
     // 7. Click Checkout
-    await page.locator('button:has-text("Checkout")').click();
+    await page.locator('button:has-text("Checkou")').click();
     await expect(page).toHaveURL(/\/checkout-step-one\.html/);
     await expect(page.getByText('Checkout: Your Information')).toBeVisible();
 
