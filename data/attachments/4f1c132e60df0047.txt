@@ -1,0 +1,3 @@
+#1 POST /register/resend-verification → 401 Unauthorized (233ms)
+   request: null
+   response: {"detail":"Not authenticated"}

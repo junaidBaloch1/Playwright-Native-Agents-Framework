@@ -1,3 +1,0 @@
-#1 POST /register/resend-verification-email → 422 Unprocessable Entity (175ms)
-   request: {"email":"not-an-email-format"}
-   response: {"detail":[{"type":"value_error","loc":["body","email"],"msg":"value is not a valid email address: An email address must have an @-sign.","input":"not-an-email-format","ctx":{"reason":"An email address must have an @-sign."}}]}
