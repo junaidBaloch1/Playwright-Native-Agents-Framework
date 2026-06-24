@@ -21,6 +21,8 @@ jobs:
     name: UI Test Suite
     timeout-minutes: 60
     runs-on: ubuntu-latest
+    outputs:
+      result: ${{ steps.ui_result.outputs.result }}
 
     steps:
       - name: Checkout repository
@@ -44,7 +46,7 @@ jobs:
           echo '{"cookies":[],"origins":[]}' > playwright/.auth/user.json
 
       - name: Run seed setup
-        run: npx playwright test tests/ui
+        run: npx playwright test tests/ui/seed.spec.ts
         env:
           BASE_URL: ${{ secrets.BASE_URL }}
           TEST_USER_EMAIL: ${{ secrets.TEST_USER_EMAIL }}
@@ -62,7 +64,18 @@ jobs:
           SHOPIFY_STORE_PASSWORD: ${{ secrets.SHOPIFY_STORE_PASSWORD }}
           CI: true
 
-      - name: Upload UI allure results artifact
+      - name: Set UI test result output
+        id: ui_result
+        if: always()
+        run: |
+          if [ "${{ steps.ui_tests.outcome }}" == "failure" ]; then
+            echo "result=failure" >> $GITHUB_OUTPUT
+          else
+            echo "result=success" >> $GITHUB_OUTPUT
+          fi
+
+      # Intermediate artifact — auto-deleted after 1 day, only for report job
+      - name: Upload UI allure results
         uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
         with:
@@ -70,12 +83,16 @@ jobs:
           path: allure-results/
           retention-days: 1
 
-      - name: Upload traces on failure
+      # Debug artifact — only on failure, contains screenshots/videos/traces
+      - name: Upload UI debug artifacts on failure
         uses: actions/upload-artifact@v4
         if: steps.ui_tests.outcome == 'failure'
         with:
-          name: playwright-traces-ui-${{ github.run_id }}
-          path: test-results/
+          name: debug-ui-${{ github.run_id }}
+          path: |
+            test-results/**/*.png
+            test-results/**/*.webm
+            test-results/**/*.zip
           retention-days: 7
 
   # ─────────────────────────────────────────────
@@ -85,6 +102,8 @@ jobs:
     name: API Test Suite
     timeout-minutes: 15
     runs-on: ubuntu-latest
+    outputs:
+      result: ${{ steps.api_result.outputs.result }}
 
     steps:
       - uses: actions/checkout@v4
@@ -115,7 +134,18 @@ jobs:
           API_TIMEOUT: ${{ vars.API_TIMEOUT }}
           CI: true
 
-      - name: Upload API allure results artifact
+      - name: Set API test result output
+        id: api_result
+        if: always()
+        run: |
+          if [ "${{ steps.api_tests.outcome }}" == "failure" ]; then
+            echo "result=failure" >> $GITHUB_OUTPUT
+          else
+            echo "result=success" >> $GITHUB_OUTPUT
+          fi
+
+      # Intermediate artifact — auto-deleted after 1 day, only for report job
+      - name: Upload API allure results
         uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
         with:
@@ -123,12 +153,17 @@ jobs:
           path: allure-results/
           retention-days: 1
 
-      - name: Upload traces on failure
+      # Debug artifact — only on failure, contains error logs and traces
+      - name: Upload API debug artifacts on failure
         uses: actions/upload-artifact@v4
         if: steps.api_tests.outcome == 'failure'
         with:
-          name: playwright-traces-api-${{ github.run_id }}
-          path: test-results/
+          name: debug-api-${{ github.run_id }}
+          path: |
+            test-results/**/*.png
+            test-results/**/*.webm
+            test-results/**/*.zip
+            test-results/**/trace.zip
           retention-days: 7
 
   # ─────────────────────────────────────────────
@@ -156,12 +191,14 @@ jobs:
       # ── Download raw results from both jobs ──
       - name: Download UI allure results
         uses: actions/download-artifact@v4
+        continue-on-error: true
         with:
           name: allure-results-ui
           path: allure-results
 
       - name: Download API allure results
         uses: actions/download-artifact@v4
+        continue-on-error: true
         with:
           name: allure-results-api
           path: allure-results
@@ -184,22 +221,23 @@ jobs:
       - name: Generate Allure report
         run: npm run allure:generate
 
-      # ── Deploy to GitHub Pages ──
+      # ── Deploy to GitHub Pages (primary) ──
       - name: Deploy Allure report to GitHub Pages
+        id: pages_deploy
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: allure-report
           keep_files: false
 
-      # ── Upload Allure report as artifact ──
-      - name: Upload Allure report artifact
+      # ── Upload as artifact only if Pages deploy failed (fallback) ──
+      - name: Upload Allure report artifact (fallback)
         uses: actions/upload-artifact@v4
-        if: ${{ !cancelled() }}
+        if: failure() && steps.pages_deploy.outcome == 'failure'
         with:
           name: allure-report-${{ github.run_id }}
           path: allure-report/
-          retention-days: 30
+          retention-days: 7
 
       # ── Parse summary for Slack ──
       - name: Parse Allure summary
@@ -232,8 +270,8 @@ jobs:
                 {
                   "type": "section",
                   "fields": [
-                    { "type": "mrkdwn", "text": "*UI Suite:*                  ${{ needs.test.result == 'success' && 'PASS' || 'FAIL' }}" },
-                    { "type": "mrkdwn", "text": "*API Suite:*                 ${{ needs.api-test.result == 'success' && 'PASS' || 'FAIL' }}" }
+                    { "type": "mrkdwn", "text": "*UI Suite:*                  ${{ needs.test.outputs.result == 'success' && 'PASS' || 'FAIL' }}" },
+                    { "type": "mrkdwn", "text": "*API Suite:*                 ${{ needs.api-test.outputs.result == 'success' && 'PASS' || 'FAIL' }}" }
                   ]
                 },
                 {
@@ -258,7 +296,7 @@ jobs:
                   "elements": [
                     {
                       "type": "button",
-                      "style": "${{ (needs.test.result == 'success' && needs.api-test.result == 'success') && 'primary' || 'danger' }}",
+                      "style": "${{ (needs.test.outputs.result == 'success' && needs.api-test.outputs.result == 'success') && 'primary' || 'danger' }}",
                       "text": { "type": "plain_text", "text": "📊 View Allure Report" },
                       "url": "https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/"
                     },
