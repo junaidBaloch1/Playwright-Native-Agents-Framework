@@ -1,3 +1,0 @@
-#1 POST /register/ → 201 Created (1679ms)
-   request: {"email":"testnew+1782312651270@example.com","password":"SecurePassword123!","name":"Test User"}
-   response: {"id":301,"email":"testnew+1782312651270@example.com","name":"Test User","is_active":false,"email_verified":false,"registered_as":"AGENCY","subscription_plan_code":"starter","verification_email_sent":true}

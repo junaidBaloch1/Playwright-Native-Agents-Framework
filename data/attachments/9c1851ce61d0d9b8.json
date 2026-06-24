@@ -1,0 +1,29 @@
+[
+  {
+    "method": "POST",
+    "url": "/register/",
+    "requestBody": {
+      "email": "testnew+1782314002644@example.com",
+      "password": "SecurePassword123!"
+    },
+    "status": 422,
+    "statusText": "Unprocessable Entity",
+    "responseBody": {
+      "detail": [
+        {
+          "type": "missing",
+          "loc": [
+            "body",
+            "name"
+          ],
+          "msg": "Field required",
+          "input": {
+            "email": "testnew+1782314002644@example.com",
+            "password": "SecurePassword123!"
+          }
+        }
+      ]
+    },
+    "durationMs": 182
+  }
+]
