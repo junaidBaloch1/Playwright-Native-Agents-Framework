@@ -7,6 +7,7 @@
 
 import { test, expect } from './helpers/api-logger';
 import { expectStatus, wrapFrameworkError } from './helpers/status-assert';
+import * as allure from 'allure-js-commons';
 
 const AUTH_TOKEN = process.env.API_AUTH_TOKEN || '';
 
@@ -17,5 +18,8 @@ function authHeaders(token: string = AUTH_TOKEN): Record<string, string> {
 test.describe('Seed', () => {
   test('seed', async ({ request }) => {
     // generate code here.
+     await allure.parentSuite('API RUN');
+     await allure.suite('api-setup');
+    
   });
 });

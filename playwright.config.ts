@@ -86,6 +86,7 @@ export default defineConfig({
     {
       name: 'api-setup',
       testMatch: /seed\.api\.spec\.ts/,
+      testDir: './tests/api',
       use: {
         baseURL: process.env.API_BASE_URL || 'https://social.kualitech.io',
         storageState: { cookies: [], origins: [] },
