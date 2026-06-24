@@ -208,16 +208,13 @@ jobs:
               "blocks": [
                 {
                   "type": "header",
-                  "text": {
-                    "type": "plain_text",
-                    "text": "${{ (needs.test.result == 'success' && needs.api-test.result == 'success') && '✅ All Tests Passed' || '❌ Test Run Failed' }} — ${{ github.repository }}"
-                  }
+                  "text": { "type": "plain_text", "text": "Playwright Test Suite Results" }
                 },
                 {
                   "type": "section",
                   "fields": [
-                    { "type": "mrkdwn", "text": "*UI Suite:*\n${{ needs.test.result == 'success' && 'PASS' || 'FAIL' }}" },
-                    { "type": "mrkdwn", "text": "*API Suite:*\n${{ needs.api-test.result == 'success' && 'PASS' || 'FAIL' }}" }
+                    { "type": "mrkdwn", "text": "*UI Suite:*                  ${{ needs.test.result == 'success' && 'PASS' || 'FAIL' }}" },
+                    { "type": "mrkdwn", "text": "*API Suite:*                 ${{ needs.api-test.result == 'success' && 'PASS' || 'FAIL' }}" }
                   ]
                 },
                 {
@@ -225,13 +222,13 @@ jobs:
                 },
                 {
                   "type": "section",
-                  "text": { "type": "mrkdwn", "text": "*Combined Results*" },
+                  "text": { "type": "mrkdwn", "text": "*Test Result Summary*" },
                   "fields": [
-                    { "type": "mrkdwn", "text": "*Total:*                    ${{ steps.summary.outputs.total }}" },
-                    { "type": "mrkdwn", "text": "*Passed:*                   ${{ steps.summary.outputs.passed }}" },
-                    { "type": "mrkdwn", "text": "*Failed:*                   ${{ steps.summary.outputs.failed }}" },
-                    { "type": "mrkdwn", "text": "*Broken:*                   ${{ steps.summary.outputs.broken }}" },
-                    { "type": "mrkdwn", "text": "*Skipped:*                  ${{ steps.summary.outputs.skipped }}" }
+                    { "type": "mrkdwn", "text": "*Total:*                   ${{ steps.summary.outputs.total }}" },
+                    { "type": "mrkdwn", "text": "*Passed:*                    ${{ steps.summary.outputs.passed }}" },
+                    { "type": "mrkdwn", "text": "*Failed:*                    ${{ steps.summary.outputs.failed }}" },
+                    { "type": "mrkdwn", "text": "*Broken:*                    ${{ steps.summary.outputs.broken }}" },
+                    { "type": "mrkdwn", "text": "*Skipped:*                   ${{ steps.summary.outputs.skipped }}" }
                   ]
                 },
                 {
