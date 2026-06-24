@@ -1,3 +1,0 @@
-#1 POST /login/ → 200 OK (362ms)
-   request: null
-   response: {"access_token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Imp1bmFpZEBnbWFpbC5jb20iLCJleHAiOjE3ODQ4ODQ3MTh9.OYgoc7YYMMN2aroX0GN16Abeoo8iRxsN-G4kBiCvAJs","token_type":"bearer","email_verified":false}

@@ -1,3 +1,0 @@
-#1 GET /register/verify-email → 422 Unprocessable Entity (753ms)
-   request: null
-   response: {"detail":[{"type":"missing","loc":["query","token"],"msg":"Field required","input":null}]}
