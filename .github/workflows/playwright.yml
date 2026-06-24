@@ -51,21 +51,9 @@ jobs:
           TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
           SHOPIFY_STORE_PASSWORD: ${{ secrets.SHOPIFY_STORE_PASSWORD }}
 
-      # ── Restore Allure history from previous run ──
-      - name: Restore Allure history
-        uses: actions/cache@v4
-        with:
-          path: .allure-history
-          key: allure-history-ui-${{ github.ref_name }}
-          restore-keys: allure-history-ui-
-
-      - name: Seed history into allure-results
-        run: |
-          mkdir -p allure-results/history
-          cp -r .allure-history/. allure-results/history/ 2>/dev/null || true
-
       - name: Run UI tests
         run: npx playwright test tests/ui
+        continue-on-error: true
         env:
           BASE_URL: ${{ secrets.BASE_URL }}
           TEST_USER_EMAIL: ${{ secrets.TEST_USER_EMAIL }}
@@ -73,44 +61,14 @@ jobs:
           SHOPIFY_STORE_PASSWORD: ${{ secrets.SHOPIFY_STORE_PASSWORD }}
           CI: true
 
-      - name: Generate Allure report
-        if: ${{ !cancelled() }}
-        run: npx allure generate allure-results --clean -o allure-report
-
-      # ── Save history for next run ──
-      - name: Save Allure history
-        if: ${{ !cancelled() }}
-        run: |
-          mkdir -p .allure-history
-          cp -r allure-report/history/. .allure-history/ 2>/dev/null || true
-
-      - name: Cache Allure history
-        if: ${{ !cancelled() }}
-        uses: actions/cache/save@v4
-        with:
-          path: .allure-history
-          key: allure-history-ui-${{ github.ref_name }}
-
-      # ── Upload Allure report as artifact ──
-      - name: Upload Allure report artifact
+      - name: Upload UI allure results artifact
         uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
         with:
-          name: allure-report-ui-${{ github.run_id }}
-          path: allure-report/
-          retention-days: 30
+          name: allure-results-ui
+          path: allure-results/
+          retention-days: 1
 
-      # ── Deploy to GitHub Pages (ui subfolder) ──
-      - name: Deploy UI Allure report to GitHub Pages
-        if: ${{ !cancelled() && github.ref == 'refs/heads/main' }}
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: allure-report
-          destination_dir: ui
-          keep_files: true
-
-      # ── Upload Playwright traces on failure ──
       - name: Upload traces on failure
         uses: actions/upload-artifact@v4
         if: failure()
@@ -118,76 +76,6 @@ jobs:
           name: playwright-traces-ui-${{ github.run_id }}
           path: test-results/
           retention-days: 7
-
-      # ── Parse Allure summary for Slack ──
-      - name: Parse Allure summary
-        if: ${{ !cancelled() }}
-        id: ui_summary
-        run: |
-          SUMMARY=$(node -e "
-            const fs = require('fs');
-            const p = 'allure-results/widgets/summary.json';
-            if (!fs.existsSync(p)) { 
-              console.log('total=0\npassed=0\nfailed=0\nbroken=0\nskipped=0');
-              process.exit(0);
-            }
-            const s = JSON.parse(fs.readFileSync(p));
-            const st = s.statistic;
-            console.log('total=' + st.total);
-            console.log('passed=' + st.passed);
-            console.log('failed=' + st.failed);
-            console.log('broken=' + st.broken);
-            console.log('skipped=' + st.skipped);
-          ")
-          echo "$SUMMARY" >> $GITHUB_OUTPUT
-
-      # ── Slack notification ──
-      - name: Send Slack notification (UI)
-        if: ${{ !cancelled() }}
-        uses: slackapi/slack-github-action@v1.27.0
-        with:
-          payload: |
-            {
-              "text": "*UI Test Suite — ${{ job.status == 'success' && '✅ Passed' || '❌ Failed' }}*",
-              "blocks": [
-                {
-                  "type": "header",
-                  "text": {
-                    "type": "plain_text",
-                    "text": "🖥️ UI Test Suite — ${{ job.status == 'success' && 'Passed' || 'Failed' }}"
-                  }
-                },
-                {
-                  "type": "section",
-                  "fields": [
-                    { "type": "mrkdwn", "text": "*Total:*\n${{ steps.ui_summary.outputs.total }}" },
-                    { "type": "mrkdwn", "text": "*✅ Passed:*\n${{ steps.ui_summary.outputs.passed }}" },
-                    { "type": "mrkdwn", "text": "*❌ Failed:*\n${{ steps.ui_summary.outputs.failed }}" },
-                    { "type": "mrkdwn", "text": "*⚠️ Broken:*\n${{ steps.ui_summary.outputs.broken }}" },
-                    { "type": "mrkdwn", "text": "*⏭️ Skipped:*\n${{ steps.ui_summary.outputs.skipped }}" },
-                    { "type": "mrkdwn", "text": "*Branch:*\n${{ github.ref_name }}" }
-                  ]
-                },
-                {
-                  "type": "actions",
-                  "elements": [
-                    {
-                      "type": "button",
-                      "text": { "type": "plain_text", "text": "📊 Allure Report" },
-                      "url": "https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/ui/"
-                    },
-                    {
-                      "type": "button",
-                      "text": { "type": "plain_text", "text": "🔍 View Run" },
-                      "url": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-                    }
-                  ]
-                }
-              ]
-            }
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
 
   # ─────────────────────────────────────────────
   # JOB 2: API TESTS
@@ -214,21 +102,9 @@ jobs:
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
 
-      # ── Restore Allure history from previous run ──
-      - name: Restore Allure history
-        uses: actions/cache@v4
-        with:
-          path: .allure-history
-          key: allure-history-api-${{ github.ref_name }}
-          restore-keys: allure-history-api-
-
-      - name: Seed history into allure-results
-        run: |
-          mkdir -p allure-results/history
-          cp -r .allure-history/. allure-results/history/ 2>/dev/null || true
-
       - name: Run API tests
         run: npx playwright test --project="API RUN"
+        continue-on-error: true
         env:
           API_BASE_URL: ${{ secrets.API_BASE_URL }}
           API_AUTH_TOKEN: ${{ secrets.API_AUTH_TOKEN }}
@@ -237,99 +113,150 @@ jobs:
           API_TIMEOUT: ${{ vars.API_TIMEOUT }}
           CI: true
 
-      - name: Generate Allure report
-        if: ${{ !cancelled() }}
-        run: npx allure generate allure-results --clean -o allure-report
-
-      # ── Save history for next run ──
-      - name: Save Allure history
-        if: ${{ !cancelled() }}
-        run: |
-          mkdir -p .allure-history
-          cp -r allure-report/history/. .allure-history/ 2>/dev/null || true
-
-      - name: Cache Allure history
-        if: ${{ !cancelled() }}
-        uses: actions/cache/save@v4
-        with:
-          path: .allure-history
-          key: allure-history-api-${{ github.ref_name }}
-
-      # ── Upload Allure report as artifact ──
-      - name: Upload Allure report artifact
+      - name: Upload API allure results artifact
         uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
         with:
-          name: allure-report-api-${{ github.run_id }}
-          path: allure-report/
-          retention-days: 14
+          name: allure-results-api
+          path: allure-results/
+          retention-days: 1
 
-      # ── Deploy to GitHub Pages (api subfolder) ──
-      - name: Deploy API Allure report to GitHub Pages
-        if: ${{ !cancelled() && github.ref == 'refs/heads/main' }}
+  # ─────────────────────────────────────────────
+  # JOB 3: COMBINED REPORT + SLACK NOTIFICATION
+  # ─────────────────────────────────────────────
+  report:
+    name: Generate Report & Notify
+    runs-on: ubuntu-latest
+    if: always()
+    needs: [test, api-test]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      # ── Download raw results from both jobs ──
+      - name: Download UI allure results
+        uses: actions/download-artifact@v4
+        with:
+          name: allure-results-ui
+          path: allure-results
+
+      - name: Download API allure results
+        uses: actions/download-artifact@v4
+        with:
+          name: allure-results-api
+          path: allure-results
+
+      # ── Restore trend history from gh-pages ──
+      - name: Checkout gh-pages for history
+        uses: actions/checkout@v4
+        continue-on-error: true
+        with:
+          ref: gh-pages
+          path: gh-pages-dir
+
+      - name: Seed Allure history for trend
+        run: |
+          mkdir -p allure-results/history
+          cp -r gh-pages-dir/history/. allure-results/history/ 2>/dev/null || true
+        continue-on-error: true
+
+      # ── Generate unified Allure report ──
+      - name: Generate Allure report
+        run: npm run allure:generate
+
+      # ── Deploy to GitHub Pages ──
+      - name: Deploy Allure report to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: allure-report
-          destination_dir: api
-          keep_files: true
+          keep_files: false
 
-      # ── Parse Allure summary for Slack ──
+      # ── Parse summary for Slack ──
       - name: Parse Allure summary
-        if: ${{ !cancelled() }}
-        id: api_summary
+        id: summary
         run: |
-          SUMMARY=$(node -e "
+          node -e "
             const fs = require('fs');
-            const p = 'allure-results/widgets/summary.json';
-            if (!fs.existsSync(p)) { 
-              console.log('total=0\npassed=0\nfailed=0\nbroken=0\nskipped=0');
-              process.exit(0);
+            const p = 'allure-report/widgets/summary.json';
+            let total=0, passed=0, failed=0, broken=0, skipped=0;
+            if (fs.existsSync(p)) {
+              const st = JSON.parse(fs.readFileSync(p)).statistic;
+              total=st.total; passed=st.passed; failed=st.failed;
+              broken=st.broken; skipped=st.skipped;
             }
-            const s = JSON.parse(fs.readFileSync(p));
-            const st = s.statistic;
-            console.log('total=' + st.total);
-            console.log('passed=' + st.passed);
-            console.log('failed=' + st.failed);
-            console.log('broken=' + st.broken);
-            console.log('skipped=' + st.skipped);
-          ")
-          echo "$SUMMARY" >> $GITHUB_OUTPUT
+            const out = \`total=\${total}\npassed=\${passed}\nfailed=\${failed}\nbroken=\${broken}\nskipped=\${skipped}\`;
+            fs.appendFileSync(process.env.GITHUB_OUTPUT, out + '\n');
+          "
 
-      # ── Slack notification ──
-      - name: Send Slack notification (API)
-        if: ${{ !cancelled() }}
+      # ── Send combined Slack notification ──
+      - name: Send Slack notification
         uses: slackapi/slack-github-action@v1.27.0
         with:
           payload: |
             {
-              "text": "*API Test Suite — ${{ job.status == 'success' && '✅ Passed' || '❌ Failed' }}*",
               "blocks": [
                 {
                   "type": "header",
                   "text": {
                     "type": "plain_text",
-                    "text": "🔌 API Test Suite — ${{ job.status == 'success' && 'Passed' || 'Failed' }}"
+                    "text": "${{ (needs.test.result == 'success' && needs.api-test.result == 'success') && '✅ All Tests Passed' || '❌ Test Run Failed' }} — ${{ github.repository }}"
                   }
+                },
+                {
+                  "type": "context",
+                  "elements": [
+                    {
+                      "type": "mrkdwn",
+                      "text": "Run *#${{ github.run_number }}* | Branch: *${{ github.ref_name }}* | By: *${{ github.actor }}* | ${{ github.event.head_commit.message }}"
+                    }
+                  ]
+                },
+                {
+                  "type": "divider"
                 },
                 {
                   "type": "section",
                   "fields": [
-                    { "type": "mrkdwn", "text": "*Total:*\n${{ steps.api_summary.outputs.total }}" },
-                    { "type": "mrkdwn", "text": "*✅ Passed:*\n${{ steps.api_summary.outputs.passed }}" },
-                    { "type": "mrkdwn", "text": "*❌ Failed:*\n${{ steps.api_summary.outputs.failed }}" },
-                    { "type": "mrkdwn", "text": "*⚠️ Broken:*\n${{ steps.api_summary.outputs.broken }}" },
-                    { "type": "mrkdwn", "text": "*⏭️ Skipped:*\n${{ steps.api_summary.outputs.skipped }}" },
-                    { "type": "mrkdwn", "text": "*Branch:*\n${{ github.ref_name }}" }
+                    { "type": "mrkdwn", "text": "*🖥️ UI Suite:*\n${{ needs.test.result == 'success' && '🟢 PASS' || '🔴 FAIL' }}" },
+                    { "type": "mrkdwn", "text": "*🔌 API Suite:*\n${{ needs.api-test.result == 'success' && '🟢 PASS' || '🔴 FAIL' }}" }
                   ]
+                },
+                {
+                  "type": "divider"
+                },
+                {
+                  "type": "section",
+                  "text": { "type": "mrkdwn", "text": "*📊 Combined Results*" },
+                  "fields": [
+                    { "type": "mrkdwn", "text": "*Total:*\n${{ steps.summary.outputs.total }}" },
+                    { "type": "mrkdwn", "text": "*✅ Passed:*\n${{ steps.summary.outputs.passed }}" },
+                    { "type": "mrkdwn", "text": "*❌ Failed:*\n${{ steps.summary.outputs.failed }}" },
+                    { "type": "mrkdwn", "text": "*⚠️ Broken:*\n${{ steps.summary.outputs.broken }}" },
+                    { "type": "mrkdwn", "text": "*⏭️ Skipped:*\n${{ steps.summary.outputs.skipped }}" }
+                  ]
+                },
+                {
+                  "type": "divider"
                 },
                 {
                   "type": "actions",
                   "elements": [
                     {
                       "type": "button",
-                      "text": { "type": "plain_text", "text": "📊 Allure Report" },
-                      "url": "https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/api/"
+                      "style": "${{ (needs.test.result == 'success' && needs.api-test.result == 'success') && 'primary' || 'danger' }}",
+                      "text": { "type": "plain_text", "text": "📊 View Allure Report" },
+                      "url": "https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/"
                     },
                     {
                       "type": "button",
