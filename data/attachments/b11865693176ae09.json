@@ -1,0 +1,13 @@
+[
+  {
+    "method": "POST",
+    "url": "/register/resend-verification",
+    "requestBody": null,
+    "status": 401,
+    "statusText": "Unauthorized",
+    "responseBody": {
+      "detail": "Not authenticated"
+    },
+    "durationMs": 186
+  }
+]
