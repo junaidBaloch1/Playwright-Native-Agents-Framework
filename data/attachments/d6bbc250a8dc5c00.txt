@@ -1,3 +1,0 @@
-#1 POST /register/ → 422 Unprocessable Entity (560ms)
-   request: {"email":"testnew+1782310143798@example.com","password":"SecurePassword123!"}
-   response: {"detail":[{"type":"missing","loc":["body","name"],"msg":"Field required","input":{"email":"testnew+1782310143798@example.com","password":"SecurePassword123!"}}]}

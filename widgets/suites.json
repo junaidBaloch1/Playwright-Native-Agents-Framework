@@ -1,1 +1,1 @@
-{"total":1,"items":[{"uid":"b819dcf90a145b4ce3c2e407162bed93","name":"API RUN","statistic":{"failed":1,"broken":0,"skipped":0,"passed":19,"unknown":0,"total":20}}]}
+{"total":2,"items":[{"uid":"b819dcf90a145b4ce3c2e407162bed93","name":"API RUN","statistic":{"failed":1,"broken":0,"skipped":0,"passed":19,"unknown":0,"total":20}},{"uid":"e01586d29e9f0b392c843b1ac9f6ec4a","name":"UI RUN","statistic":{"failed":1,"broken":0,"skipped":0,"passed":2,"unknown":0,"total":3}}]}
