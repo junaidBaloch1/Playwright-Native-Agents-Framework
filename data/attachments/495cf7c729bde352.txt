@@ -1,3 +1,0 @@
-#1 POST /register/ → 422 Unprocessable Entity (187ms)
-   request: {"email":"not-an-email-format","password":"SecurePassword123!","name":"Test User"}
-   response: {"detail":[{"type":"value_error","loc":["body","email"],"msg":"value is not a valid email address: An email address must have an @-sign.","input":"not-an-email-format","ctx":{"reason":"An email address must have an @-sign."}}]}
